@@ -20,7 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'password',   // Digunakan untuk login normal (email+password)
+        'id_google',  // Digunakan untuk login via Google SSO (menyimpan Google User ID)
+        'otp',        // Menyimpan kode OTP sementara untuk verifikasi 2FA
     ];
 
     /**

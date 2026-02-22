@@ -59,7 +59,8 @@
                 <!-- Footer -->
                 <footer class="footer">
                     <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
+                        <span class=
+                        "text-muted text-center text-sm-left d-block d-sm-inline-block">
                             Copyright © {{ date('Y') }} PURPLEBOOK. All rights reserved.
                         </span>
                     </div>
@@ -76,27 +77,48 @@
     <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
     <script src="{{ asset('assets/js/misc.js') }}"></script>
     
-    <!-- Dropdown Toggle Script -->
+    <!-- Dropdown Toggle Script (handles all navbar dropdowns) -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const dropdownToggle = document.getElementById('profileDropdown');
-        if (dropdownToggle) {
-            dropdownToggle.addEventListener('click', function(e) {
+        // Handle all dropdown toggles in navbar
+        const dropdownToggles = document.querySelectorAll('.navbar .dropdown-toggle');
+        dropdownToggles.forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 const dropdownMenu = this.nextElementSibling;
                 if (dropdownMenu) {
+                    // Close all other open dropdowns first
+                    document.querySelectorAll('.navbar .dropdown-menu.show').forEach(function(openMenu) {
+                        if (openMenu !== dropdownMenu) {
+                            openMenu.classList.remove('show');
+                        }
+                    });
                     dropdownMenu.classList.toggle('show');
                 }
             });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.nav-profile')) {
-                    const dropdowns = document.querySelectorAll('.dropdown-menu.show');
-                    dropdowns.forEach(dd => dd.classList.remove('show'));
+        });
+
+        // Fullscreen toggle
+        const fullscreenBtn = document.getElementById('fullscreen-button');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', function() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
                 }
             });
         }
+
+        // Close all dropdowns when clicking outside navbar
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.navbar')) {
+                document.querySelectorAll('.navbar .dropdown-menu.show').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            }
+        });
     });
     </script>
     

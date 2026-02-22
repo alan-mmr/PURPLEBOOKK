@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google OAuth (Socialite)
+    |--------------------------------------------------------------------------
+    | Konfigurasi untuk login menggunakan akun Google (SSO).
+    | Nilai diambil dari file .env agar credentials tidak hardcoded di sini.
+    */
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),      // Client ID dari Google Cloud Console
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),  // Client Secret dari Google Cloud Console
+        'redirect'      => env('GOOGLE_REDIRECT_URI'),   // URL callback setelah user login di Google
+    ],
+
 ];
