@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,5 +57,13 @@ Route::middleware('auth')->group(function () {
     Route::get('pdf', [PdfController::class, 'index'])->name('pdf.index');
     Route::get('pdf/sertifikat', [PdfController::class, 'cetakSertifikat'])->name('pdf.sertifikat');
     Route::get('pdf/undangan', [PdfController::class, 'cetakUndangan'])->name('pdf.undangan');
+
+    // ─────────────────────────────────────────────────────────────
+    // Barang CRUD + Cetak Label (Studi Kasus 3)
+    // Route cetakLabel harus didaftar SEBELUM Route::resource
+    // agar tidak konflik dengan {barang} slug
+    // ─────────────────────────────────────────────────────────────
+    Route::post('barang/cetak-label', [BarangController::class, 'cetakLabel'])->name('barang.cetakLabel');
+    Route::resource('barang', BarangController::class);
 });
 

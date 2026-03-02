@@ -79,7 +79,7 @@
             </tr>
         </table>
 
-        <p style="margin-top: 30px;">Yth. Sdr/i <strong>{{ $nama }}</strong>,</p>
+        <p style="margin-top: 30px;">Yth. Sdr/i  <strong>{{ $nama }}</strong>,</p>
         <p>Dengan hormat,</p>
         <p>Dalam rangka mempererat tali silaturahmi antar komunitas pembaca, manajemen Purplebook berencana menyelenggarakan acara 
         exclusive Meet & Greet bersama penulis terkemuka. Sehubungan dengan hal tersebut, kami mengundang Bapak/Ibu untuk hadir pada:</p>

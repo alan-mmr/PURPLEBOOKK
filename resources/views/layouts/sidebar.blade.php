@@ -40,6 +40,14 @@
             </a>
         </li>
 
+        {{-- Barang Management (Studi Kasus 3 - Label TnJ No 108) --}}
+        <li class="nav-item {{ request()->is('barang*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('barang.index') }}">
+                <span class="menu-title">Barang</span>
+                <i class="mdi mdi-tag-multiple menu-icon"></i>
+            </a>
+        </li>
+
         {{-- PDF Generation (Studi Kasus 2) --}}
         <li class="nav-item {{ request()->is('pdf*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pdf.index') }}">

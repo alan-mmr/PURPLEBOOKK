@@ -83,13 +83,11 @@ class AuthController extends Controller
 
     /**
      * Redirect user ke halaman login Google.
-     *
-     * User akan diarahkan ke halaman pilih akun Google (milik Google, bukan app ini).
-     * Setelah login di Google, Google akan redirect ke handleGoogleCallback().
+     * Socialite akan generate URL OAuth dan redirect user ke Google.
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     /**

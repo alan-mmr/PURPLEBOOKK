@@ -51,5 +51,8 @@ class DatabaseSeeder extends Seeder
             'pengarang' => 'Keigo Higashino',
             'idkategori' => $novel->idkategori,
         ]);
+
+        // Seed data barang Toko PurpleBook (12 barang)
+        $this->call(BarangSeeder::class);
     }
 }
