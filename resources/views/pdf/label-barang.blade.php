@@ -4,24 +4,19 @@
     <meta charset="UTF-8">
     <title>Label Barang — TnJ No. 108</title>
     <style>
-        /*
-         * ──────────────────────────────────────────────────────────
-         * CSS INLINE untuk DomPDF (tidak support external stylesheet)
-         * Ukuran kertas A4 portrait: 210mm × 297mm
-         * Grid label: 5 kolom × 8 baris = 40 label
-         * Setiap label: ~38mm × 33.8mm
-         * ──────────────────────────────────────────────────────────
-         */
+        /* @page HARUS di atas, sebelum semua selector lain */
+        @page {
+            margin-top:    {{ $pageMarginTop }}mm;
+            margin-bottom: {{ $pageMarginTop }}mm;
+            margin-left:   {{ $pageMarginSide }}mm;
+            margin-right:  {{ $pageMarginSide }}mm;
+        }
 
-        /* Reset & page setup */
-        * {
+        /* Reset — JANGAN pakai * karena bisa override @page di DomPDF */
+        body, table, td, tr, span, hr, img, p, div {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        @page {
-            margin: 5mm 5mm 5mm 5mm;
         }
 
         body {
@@ -29,23 +24,22 @@
             font-size: 7pt;
         }
 
-        /* Tabel utama: wrapping semua 40 label */
+        /* Tabel: border-separate untuk gap antar label, width 100% agar pas */
         table.label-sheet {
-            width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: {{ $gapXMm }}mm {{ $gapYMm }}mm;
             table-layout: fixed;
+            width: 100%;
         }
 
-        /* Setiap baris dalam tabel = 1 baris label (8 baris total) */
-        /* DomPDF: height pada tr saja tidak cukup, harus juga di td */
+        /* Tiap baris */
         table.label-sheet tr {
             height: {{ $labelHeightMm }}mm;
         }
 
-        /* Setiap sel = 1 label */
-        /* min-height + height diperlukan agar DomPDF tidak collapse sel kosong */
+        /* Tiap sel = 1 label — TANPA width explicit, biar table-layout:fixed yang atur
+           agar border 0.5pt tidak bikin overflow */
         table.label-sheet td {
-            width: {{ $labelWidthMm }}mm;
             height: {{ $labelHeightMm }}mm;
             min-height: {{ $labelHeightMm }}mm;
             border: 0.5pt solid #cccccc;
@@ -55,9 +49,9 @@
             overflow: hidden;
         }
 
-        /* Label kosong (slot sebelum posisi awal) — tidak ada border isi */
+        /* Slot kosong sebelum posisi awal cetak */
         table.label-sheet td.empty-slot {
-            border: 0.5pt dashed #eeeeee;
+            border: 0.5pt dashed #dddddd;
         }
 
         /* Konten dalam label */
@@ -66,9 +60,9 @@
             width: 100%;
         }
 
-        /* Nama barang */
+        /* Nama barang — 20% dari tinggi label */
         .label-nama {
-            font-size: 6.5pt;
+            font-size: {{ $fontNamaPt }}pt;
             font-weight: bold;
             color: #333333;
             white-space: nowrap;
@@ -78,18 +72,18 @@
             margin-bottom: 1pt;
         }
 
-        /* Harga — paling menonjol di label */
+        /* Harga — 25% dari tinggi label (paling menonjol) */
         .label-harga {
-            font-size: 9pt;
+            font-size: {{ $fontHargaPt }}pt;
             font-weight: bold;
             color: #7B2D8B;
             display: block;
             margin-bottom: 1pt;
         }
 
-        /* ID Barang */
+        /* ID Barang — 13% dari tinggi label */
         .label-id {
-            font-size: 5.5pt;
+            font-size: {{ $fontIdPt }}pt;
             color: #666666;
             font-family: 'Courier New', Courier, monospace;
             display: block;
@@ -119,9 +113,9 @@
             margin: 1pt 2pt;
         }
 
-        /* Logo mini / watermark branding */
+        /* Logo mini / watermark — 10% dari tinggi label */
         .label-brand {
-            font-size: 4.5pt;
+            font-size: {{ $fontBrandPt }}pt;
             color: #bbbbbb;
             display: block;
         }
@@ -167,7 +161,7 @@
                     <span class="label-barcode">
                         <img src="data:image/png;base64,{{ $barcodes[$slot->id_barang] ?? '' }}"
                              alt="{{ $slot->id_barang }}"
-                             style="width:100%; height:28pt; display:block;">
+                             style="width:100%; height:{{ $barcodeHeightPt }}pt; display:block;">
                     </span>
 
                     {{-- ID Barang (di bawah barcode) --}}

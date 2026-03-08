@@ -10,15 +10,26 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 class BarangController extends Controller
 {
     // ─────────────────────────────────────────────────────────────
-    // KONSTANTA UKURAN LABEL KERTAS TnJ No 108 (A4: 5 kolom × 8 baris)
-    // Ubah di sini jika ingin ganti ukuran kertas atau jumlah label
+    // KONSTANTA UKURAN LABEL KERTAS TnJ No 108
+    // ✏️  Ubah nilai berikut sesuai pengukuran fisik kertas:
     // ─────────────────────────────────────────────────────────────
-    const LABEL_COLS       = 5;         // Jumlah kolom per halaman
-    const LABEL_ROWS       = 8;         // Jumlah baris per halaman
-    const LABEL_TOTAL      = 40;        // Total label per halaman (5 x 8)
-    const LABEL_WIDTH_MM   = 37.0;      // Lebar tiap label dalam mm (A4 landscape ~ 38mm)
-    const LABEL_HEIGHT_MM  = 33.8;      // Tinggi tiap label dalam mm (A4 portrait ~ 33.8mm)
-    const PAGE_MARGIN_MM   = 5.0;       // Margin halaman PDF
+    const LABEL_COLS       = 5;      // Jumlah kolom per halaman
+    const LABEL_ROWS       = 8;      // Jumlah baris per halaman
+    const LABEL_TOTAL      = 40;     // Total label (COLS × ROWS)
+    const LABEL_WIDTH_MM   = 38.0;   // Lebar 1 label (mm)
+    const LABEL_HEIGHT_MM  = 16.0;   // Tinggi 1 label (mm) — 1.8cm fisik - ~2pt padding
+
+    // Margin kertas — diukur dari tepi kertas ke label pertama
+    const PAPER_MARGIN_TOP_MM  = 3.0;  // 0.3 cm (atas & bawah)
+    const PAPER_MARGIN_SIDE_MM = 4.0;  // 0.4 cm (kiri & kanan)
+
+    // Jarak antar label di kertas fisik
+    const LABEL_GAP_X_MM   = 3.0;   // 0.3 cm = 3mm (horizontal antar kolom)
+    const LABEL_GAP_Y_MM   = 2.0;   // 0.2 cm = 2mm (vertikal antar baris)
+
+    // Dimensi kertas A4
+    const PAPER_WIDTH_MM   = 210.0;
+    const PAPER_HEIGHT_MM  = 297.0;
 
     // ─────────────────────────────────────────────────────────────
     // INDEX - Tampilkan semua barang (DataTables)
@@ -27,6 +38,19 @@ class BarangController extends Controller
     {
         $barang = Barang::orderBy('timestamp', 'desc')->get();
         return view('pages.barang.index', compact('barang'));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // SK2 & SK3 — Diskon Barang (client-side, tanpa DB)
+    // ─────────────────────────────────────────────────────────────
+    public function diskonHtml()
+    {
+        return view('pages.barang.diskon-html');
+    }
+
+    public function diskonDatatables()
+    {
+        return view('pages.barang.diskon-datatables');
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -161,9 +185,30 @@ class BarangController extends Controller
         // Pecah menjadi 8 baris × 5 kolom
         $rows = array_chunk($slots, self::LABEL_COLS);
 
+        // ── Gap antar label: dari pengukuran fisik (bukan auto) ────────────
+        // border-spacing = jarak antar label di kertas fisik
+        $gapX = self::LABEL_GAP_X_MM;
+        $gapY = self::LABEL_GAP_Y_MM;
+
+        // @page margin: kurangi gap karena border-spacing juga tambah jarak di tepi luar
+        // Contoh: margin fisik 4mm, gap 3mm → @page margin = 1mm (1mm + 3mm spacing = 4mm total)
+        $pageMarginSide = max(0, self::PAPER_MARGIN_SIDE_MM - $gapX);
+        $pageMarginTop  = max(0, self::PAPER_MARGIN_TOP_MM  - $gapY);
+
+        // ── Auto-calculate tinggi barcode (40% dari tinggi label) ────────
+        // Generate PNG barcode dengan tinggi proporsional
+        $barcodeHeightPx = (int) round(self::LABEL_HEIGHT_MM * 0.40 * 3.78); // mm → px (96dpi)
+        $barcodeHeightPt = round(self::LABEL_HEIGHT_MM * 0.40 * 2.835, 1);   // mm → pt (CSS)
+
+        // ── Font size proporsional dari tinggi label ─────────────────────────
+        // Konversi tinggi label mm → pt (1mm = 2.835pt), lalu ambil persentase
+        $labelHPt      = self::LABEL_HEIGHT_MM * 2.835;
+        $fontNamaPt    = round($labelHPt * 0.20, 1); // 20% → nama barang
+        $fontHargaPt   = round($labelHPt * 0.25, 1); // 25% → harga (terbesar)
+        $fontIdPt      = round($labelHPt * 0.13, 1); // 13% → id barang
+        $fontBrandPt   = round($labelHPt * 0.10, 1); // 10% → watermark brand
+
         // Generate barcode PNG (base64) untuk setiap barang unik
-        // BarcodeGeneratorPNG → encode base64 → embed sebagai data URI di <img>
-        // DomPDF support penuh untuk data:image/png;base64
         $barcodeGen = new BarcodeGeneratorPNG();
         $barcodes   = [];
         foreach ($selectedBarang as $idBarang => $item) {
@@ -171,21 +216,29 @@ class BarangController extends Controller
                 $barcodeGen->getBarcode(
                     $idBarang,
                     BarcodeGeneratorPNG::TYPE_CODE_128,
-                    2,   // lebar batang (px)
-                    60   // tinggi barcode (px)
+                    2,
+                    max(20, $barcodeHeightPx) // minimum 20px
                 )
             );
         }
 
         $data = [
-            'rows'          => $rows,
-            'barcodes'      => $barcodes,   // SVG string per id_barang
-            'labelWidthMm'  => self::LABEL_WIDTH_MM,
-            'labelHeightMm' => self::LABEL_HEIGHT_MM,
-            'pageMargn'     => self::PAGE_MARGIN_MM,
-            'cols'          => self::LABEL_COLS,
-            'startX'        => $startX,
-            'startY'        => $startY,
+            'rows'            => $rows,
+            'barcodes'        => $barcodes,
+            'labelWidthMm'    => self::LABEL_WIDTH_MM,
+            'labelHeightMm'   => self::LABEL_HEIGHT_MM,
+            'gapXMm'          => $gapX,
+            'gapYMm'          => $gapY,
+            'pageMarginTop'   => $pageMarginTop,
+            'pageMarginSide'  => $pageMarginSide,
+            'barcodeHeightPt' => $barcodeHeightPt,
+            'fontNamaPt'      => $fontNamaPt,
+            'fontHargaPt'     => $fontHargaPt,
+            'fontIdPt'        => $fontIdPt,
+            'fontBrandPt'     => $fontBrandPt,
+            'cols'            => self::LABEL_COLS,
+            'startX'          => $startX,
+            'startY'          => $startY,
         ];
 
         $pdf = Pdf::loadView('pdf.label-barang', $data);

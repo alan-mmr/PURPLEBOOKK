@@ -6,6 +6,8 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\DiskonController;
+use App\Http\Controllers\KotaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,5 +67,12 @@ Route::middleware('auth')->group(function () {
     // ─────────────────────────────────────────────────────────────
     Route::post('barang/cetak-label', [BarangController::class, 'cetakLabel'])->name('barang.cetakLabel');
     Route::resource('barang', BarangController::class);
+
+    // SK2 & SK3 — Diskon Barang (2 halaman terpisah, controller sendiri)
+    Route::get('diskon',            [DiskonController::class, 'html'])->name('diskon.html');
+    Route::get('diskon-datatables', [DiskonController::class, 'datatables'])->name('diskon.datatables');
+
+    // SK4 — Kota
+    Route::get('kota', [KotaController::class, 'index'])->name('kota.index');
 });
 

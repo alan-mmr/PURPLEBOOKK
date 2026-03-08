@@ -21,7 +21,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Form Kategori</h4>
-                <form class="forms-sample" method="POST" action="{{ isset($kategori) ? route('kategori.update', $kategori->idkategori) : route('kategori.store') }}">
+                <form id="formKategori" class="forms-sample" method="POST" action="{{ isset($kategori) ? route('kategori.update', $kategori->idkategori) : route('kategori.store') }}">
                     @csrf
                     @if(isset($kategori))
                         @method('PUT')
@@ -38,11 +38,21 @@
                         @enderror
                     </div>
                     
-                    <button type="submit" class="btn btn-gradient-primary mr-2">
-                        <i class="mdi mdi-content-save"></i> Simpan
-                    </button>
-                    <a href="{{ route('kategori.index') }}" class="btn btn-light">Batal</a>
                 </form>
+                <button type="button" id="btnSubmitKategori" class="btn btn-gradient-primary mr-2">
+                    <i class="mdi mdi-content-save"></i> Simpan
+                </button>
+                <a href="{{ route('kategori.index') }}" class="btn btn-light">Batal</a>
+
+                <script>
+                document.getElementById('btnSubmitKategori').addEventListener('click', function () {
+                    const form = document.getElementById('formKategori');
+                    if (!form.checkValidity()) { form.reportValidity(); return; }
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner-grow spinner-grow-sm mr-1"></span> Memproses...';
+                    form.submit();
+                });
+                </script>
             </div>
         </div>
     </div>

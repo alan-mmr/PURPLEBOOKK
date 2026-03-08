@@ -40,11 +40,66 @@
             </a>
         </li>
 
-        {{-- Barang Management (Studi Kasus 3 - Label TnJ No 108) --}}
-        <li class="nav-item {{ request()->is('barang*') ? 'active' : '' }}">
+        {{-- Barang Management --}}
+        <li class="nav-item {{ request()->is('barang') || request()->is('barang/create') || request()->is('barang/*/edit') || request()->is('barang/*') && !request()->is('diskon*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('barang.index') }}">
                 <span class="menu-title">Barang</span>
                 <i class="mdi mdi-tag-multiple menu-icon"></i>
+            </a>
+        </li>
+
+        {{-- Diskon Barang (SK2 & SK3) --}}
+        <li class="nav-item {{ request()->is('diskon') || request()->is('diskon-datatables') ? 'active' : '' }}"
+            id="diskonParent">
+            <a class="nav-link" href="javascript:void(0)" onclick="toggleDiskonMenu(event)">
+                <span class="menu-title">Diskon Barang</span>
+                <i class="mdi mdi-chevron-right menu-icon" id="diskonArrow"
+                   style="font-size:18px; transition:transform 0.2s;"></i>
+            </a>
+            <div id="diskonMenu" style="{{ request()->is('diskon') || request()->is('diskon-datatables') ? '' : 'display:none;' }}">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('diskon') ? 'active' : '' }}"
+                           href="{{ route('diskon.html') }}">HTML</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('diskon-datatables') ? 'active' : '' }}"
+                           href="{{ route('diskon.datatables') }}">DataTables</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <script>
+        // Rotate arrow sesuai state saat page load
+        (function() {
+            var menu = document.getElementById('diskonMenu');
+            var arrow = document.getElementById('diskonArrow');
+            if (menu && menu.style.display !== 'none') {
+                arrow.style.transform = 'rotate(90deg)';
+            }
+        })();
+
+        function toggleDiskonMenu(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var menu  = document.getElementById('diskonMenu');
+            var arrow = document.getElementById('diskonArrow');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display  = 'block';
+                arrow.style.transform = 'rotate(90deg)';  // ↓
+            } else {
+                menu.style.display  = 'none';
+                arrow.style.transform = 'rotate(0deg)';   // →
+            }
+        }
+        </script>
+
+
+        {{-- Kota (SK4) --}}
+        <li class="nav-item {{ request()->is('kota*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('kota.index') }}">
+                <span class="menu-title">Kota</span>
+                <i class="mdi mdi-map-marker-multiple menu-icon"></i>
             </a>
         </li>
 

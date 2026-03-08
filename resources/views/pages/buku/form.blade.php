@@ -21,7 +21,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Form Buku</h4>
-                <form class="forms-sample" method="POST" action="{{ isset($buku) ? route('buku.update', $buku->idbuku) : route('buku.store') }}">
+                <form id="formBuku" class="forms-sample" method="POST" action="{{ isset($buku) ? route('buku.update', $buku->idbuku) : route('buku.store') }}">
                     @csrf
                     @if(isset($buku))
                         @method('PUT')
@@ -77,11 +77,21 @@
                         @enderror
                     </div>
                     
-                    <button type="submit" class="btn btn-gradient-primary mr-2">
-                        <i class="mdi mdi-content-save"></i> Simpan
-                    </button>
-                    <a href="{{ route('buku.index') }}" class="btn btn-light">Batal</a>
                 </form>
+                <button type="button" id="btnSubmitBuku" class="btn btn-gradient-primary mr-2">
+                    <i class="mdi mdi-content-save"></i> Simpan
+                </button>
+                <a href="{{ route('buku.index') }}" class="btn btn-light">Batal</a>
+
+                <script>
+                document.getElementById('btnSubmitBuku').addEventListener('click', function () {
+                    const form = document.getElementById('formBuku');
+                    if (!form.checkValidity()) { form.reportValidity(); return; }
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner-grow spinner-grow-sm mr-1"></span> Memproses...';
+                    form.submit();
+                });
+                </script>
             </div>
         </div>
     </div>

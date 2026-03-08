@@ -27,11 +27,11 @@
 
                 @if(isset($barang))
                     {{-- Mode EDIT --}}
-                    <form action="{{ route('barang.update', $barang->id_barang) }}" method="POST">
+                    <form id="formBarang" action="{{ route('barang.update', $barang->id_barang) }}" method="POST">
                         @method('PUT')
                 @else
                     {{-- Mode CREATE --}}
-                    <form action="{{ route('barang.store') }}" method="POST">
+                    <form id="formBarang" action="{{ route('barang.store') }}" method="POST">
                 @endif
                 @csrf
 
@@ -127,18 +127,33 @@
                     </div>
                     @endif
 
-                    {{-- Tombol --}}
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-gradient-primary">
-                            <i class="mdi mdi-content-save"></i>
-                            {{ isset($barang) ? 'Simpan Perubahan' : 'Tambah Barang' }}
-                        </button>
-                        <a href="{{ route('barang.index') }}" class="btn btn-outline-secondary ml-2">
-                            <i class="mdi mdi-cancel"></i> Batal
-                        </a>
-                    </div>
-
+                    {{-- Tombol submit (di LUAR form, trigger via JS) --}}
                 </form>
+                <div class="mt-4">
+                    <button type="button" id="btnSubmitBarang" class="btn btn-gradient-primary">
+                        <i class="mdi mdi-content-save"></i>
+                        {{ isset($barang) ? 'Simpan Perubahan' : 'Tambah Barang' }}
+                    </button>
+                    <a href="{{ route('barang.index') }}" class="btn btn-outline-secondary ml-2">
+                        <i class="mdi mdi-cancel"></i> Batal
+                    </a>
+                </div>
+
+                <script>
+                // SK1 — Spinner: cegah double submit, validasi required, lalu spinner
+                document.getElementById('btnSubmitBarang').addEventListener('click', function () {
+                    const form = document.getElementById('formBarang');
+                    // Cek semua input required via HTML5
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // tampilkan popup ke field yang kosong
+                        return;
+                    }
+                    // Semua valid → spinner + disabled (cegah double click)
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner-grow spinner-grow-sm mr-1"></span> Memproses...';
+                    form.submit();
+                });
+                </script>
             </div>
         </div>
     </div>
