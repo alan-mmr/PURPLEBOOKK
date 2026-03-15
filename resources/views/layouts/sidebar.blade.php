@@ -103,6 +103,88 @@
             </a>
         </li>
 
+        {{-- Administrasi Wilayah (Studi Kasus Baru) --}}
+        <li class="nav-item {{ request()->is('administrasi') || request()->is('administrasi-axios') ? 'active' : '' }}"
+            id="administrasiParent">
+            <a class="nav-link" href="javascript:void(0)" onclick="toggleAdminMenu(event)">
+                <span class="menu-title">Administrasi</span>
+                <i class="mdi mdi-chevron-right menu-icon" id="administrasiArrow"
+                   style="font-size:18px; transition:transform 0.2s;"></i>
+            </a>
+            <div id="administrasiMenu" style="{{ request()->is('administrasi') || request()->is('administrasi-axios') ? '' : 'display:none;' }}">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('administrasi') ? 'active' : '' }}"
+                           href="{{ route('administrasi.ajax') }}">AJAX</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('administrasi-axios') ? 'active' : '' }}"
+                           href="{{ route('administrasi.axios') }}">Axios</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <script>
+        (function() {
+            var menu  = document.getElementById('administrasiMenu');
+            var arrow = document.getElementById('administrasiArrow');
+            if (menu && menu.style.display !== 'none') arrow.style.transform = 'rotate(90deg)';
+        })();
+        function toggleAdminMenu(e) {
+            e.preventDefault(); e.stopPropagation();
+            var menu  = document.getElementById('administrasiMenu');
+            var arrow = document.getElementById('administrasiArrow');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display  = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                menu.style.display  = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        </script>
+
+        {{-- Point Of Sales (Studi Kasus Baru) --}}
+        <li class="nav-item {{ request()->is('pos') || request()->is('pos-axios') ? 'active' : '' }}"
+            id="posParent">
+            <a class="nav-link" href="javascript:void(0)" onclick="togglePosMenu(event)">
+                <span class="menu-title">Point Of Sales</span>
+                <i class="mdi mdi-chevron-right menu-icon" id="posArrow"
+                   style="font-size:18px; transition:transform 0.2s;"></i>
+            </a>
+            <div id="posMenu" style="{{ request()->is('pos') || request()->is('pos-axios') ? '' : 'display:none;' }}">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('pos') ? 'active' : '' }}"
+                           href="{{ route('pos.ajax') }}">AJAX</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('pos-axios') ? 'active' : '' }}"
+                           href="{{ route('pos.axios') }}">Axios</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <script>
+        (function() {
+            var menu  = document.getElementById('posMenu');
+            var arrow = document.getElementById('posArrow');
+            if (menu && menu.style.display !== 'none') arrow.style.transform = 'rotate(90deg)';
+        })();
+        function togglePosMenu(e) {
+            e.preventDefault(); e.stopPropagation();
+            var menu  = document.getElementById('posMenu');
+            var arrow = document.getElementById('posArrow');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display  = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                menu.style.display  = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        </script>
+
         {{-- PDF Generation (Studi Kasus 2) --}}
         <li class="nav-item {{ request()->is('pdf*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pdf.index') }}">
@@ -113,3 +195,4 @@
 
     </ul>
 </nav>
+

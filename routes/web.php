@@ -8,6 +8,8 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\KotaController;
+use App\Http\Controllers\WilayahController;
+use App\Http\Controllers\PenjualanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,5 +76,28 @@ Route::middleware('auth')->group(function () {
 
     // SK4 — Kota
     Route::get('kota', [KotaController::class, 'index'])->name('kota.index');
-});
 
+    // ─────────────────────────────────────────────────────────────
+    // Studi Kasus Baru — Wilayah Administrasi Indonesia
+    // Dua halaman: AJAX (jQuery) dan Axios
+    // ─────────────────────────────────────────────────────────────
+    Route::get('administrasi',       [WilayahController::class, 'ajax'])->name('administrasi.ajax');
+    Route::get('administrasi-axios', [WilayahController::class, 'axios'])->name('administrasi.axios');
+
+    // Endpoint AJAX: return JSON untuk cascading select
+    Route::get('wilayah/kota',      [WilayahController::class, 'getKota'])->name('wilayah.kota');
+    Route::get('wilayah/kecamatan', [WilayahController::class, 'getKecamatan'])->name('wilayah.kecamatan');
+    Route::get('wilayah/kelurahan', [WilayahController::class, 'getKelurahan'])->name('wilayah.kelurahan');
+
+    // ─────────────────────────────────────────────────────────────
+    // Studi Kasus Baru — Point of Sales (POS)
+    // Dua halaman: AJAX (jQuery) dan Axios
+    // ─────────────────────────────────────────────────────────────
+    Route::get('pos',        [PenjualanController::class, 'ajax'])->name('pos.ajax');
+    Route::get('pos-axios',  [PenjualanController::class, 'axios'])->name('pos.axios');
+
+    // Endpoint AJAX: lookup barang & simpan transaksi
+    Route::get('pos/barang', [PenjualanController::class, 'getBarang'])->name('pos.getBarang');
+    Route::post('pos/store', [PenjualanController::class, 'store'])->name('pos.store');
+
+});

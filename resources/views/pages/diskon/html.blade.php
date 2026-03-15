@@ -116,7 +116,7 @@ let activeRow = null;
 
 document.getElementById('btnTambah').addEventListener('click', function () {
     const form = document.getElementById('formDiskon');
-    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (!form.checkValidity()) { form.  reportValidity(); return; }
 
     this.disabled = true;
     this.innerHTML = '<span class="spinner-grow spinner-grow-sm mr-1"></span> Memproses...';
