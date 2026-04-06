@@ -10,6 +10,12 @@ use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\KotaController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\PemesananController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\VendorDashboardController;
+use App\Http\Controllers\VendorController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,6 +49,24 @@ Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback
 // ─────────────────────────────────────────────────────────────
 Route::get('otp', [AuthController::class, 'showOtp'])->name('otp.show');
 Route::post('otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+
+// ─────────────────────────────────────────────────────────────
+// Modul Pemesanan — Public (tidak perlu login)
+// Customer bisa pesan, bayar, dan cek status tanpa akun
+// ─────────────────────────────────────────────────────────────
+Route::get('pesan', [PemesananController::class, 'index'])->name('pesan.index');
+Route::get('pesan/menu', [PemesananController::class, 'getMenu'])->name('pesan.getMenu');
+Route::post('pesan', [PemesananController::class, 'store'])->name('pesan.store');
+Route::get('pesan/{id}/bayar', [PaymentController::class, 'pay'])->name('pesan.bayar');
+Route::get('pesan/{id}/status', [PemesananController::class, 'status'])->name('pesan.status');
+
+// ─────────────────────────────────────────────────────────────
+// Midtrans Webhook — exclude CSRF (Midtrans tidak kirim CSRF token)
+// Keamanan dijamin via signature key SHA512 di dalam handler
+// ─────────────────────────────────────────────────────────────
+Route::post('midtrans/webhook', [PaymentController::class, 'webhook'])
+    ->name('midtrans.webhook')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 // ─────────────────────────────────────────────────────────────
 // Protected Routes (hanya bisa diakses setelah login + OTP berhasil)
@@ -100,4 +124,21 @@ Route::middleware('auth')->group(function () {
     Route::get('pos/barang', [PenjualanController::class, 'getBarang'])->name('pos.getBarang');
     Route::post('pos/store', [PenjualanController::class, 'store'])->name('pos.store');
 
+    // ─────────────────────────────────────────────────────────────
+    // Vendor Dashboard — hanya role vendor
+    // ─────────────────────────────────────────────────────────────
+    Route::middleware('role:vendor')->group(function () {
+        Route::get('vendor/dashboard', [VendorDashboardController::class, 'index'])
+            ->name('vendor.dashboard');
+        Route::resource('menu', MenuController::class);
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Admin — Kelola Vendor (CRUD)
+    // Hanya role admin yang bisa akses
+    // ─────────────────────────────────────────────────────────────
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('vendor', VendorController::class);
+        Route::resource('user', UserController::class);
+    });
 });

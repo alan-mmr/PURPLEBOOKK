@@ -48,4 +48,22 @@ return [
         'redirect'      => env('GOOGLE_REDIRECT_URI'),   // URL callback setelah user login di Google
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Midtrans Payment Gateway
+    |--------------------------------------------------------------------------
+    | Cukup ganti MIDTRANS_IS_PRODUCTION=true di .env saat go-live.
+    | Tidak ada yang perlu diubah di kode.
+    */
+    'midtrans' => [
+        'server_key'    => env('MIDTRANS_SERVER_KEY'),
+        'client_key'    => env('MIDTRANS_CLIENT_KEY'),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+
+        // URL Snap JS otomatis menyesuaikan sandbox/production via env
+        'snap_url' => env('MIDTRANS_IS_PRODUCTION', false)
+            ? 'https://app.midtrans.com/snap/snap.js'
+            : 'https://app.sandbox.midtrans.com/snap/snap.js',
+    ],
+
 ];

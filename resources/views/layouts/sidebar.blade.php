@@ -9,13 +9,16 @@
                     <span class="login-status online"></span>
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
-                    <span class="font-weight-bold mb-2">{{ Auth::user()->name }}</span>
-                    <span class="text-secondary text-small">Administrator</span>
+                    <span class="font-weight-bold mb-2">{{ Auth::check() ? Auth::user()->name : 'Tamu (Guest)' }}</span>
+                    <span class="text-secondary text-small">{{ Auth::check() ? ucfirst(Auth::user()->role ?? 'User') : 'Pengunjung' }}</span>
                 </div>
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
             </a>
         </li>
 
+        @auth
+        {{-- Hanya Admin yang bisa akses menu lama ini --}}
+        @if(Auth::user()->role === 'admin')
         {{-- Dashboard --}}
         <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('dashboard') }}">
@@ -192,6 +195,48 @@
                 <i class="mdi mdi-file-pdf-box menu-icon"></i>
             </a>
         </li>
+        @endif
+        @endauth
+
+        {{-- Pemesanan (publik) --}}
+        <li class="nav-item {{ request()->is('pesan*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('pesan.index') }}">
+                <span class="menu-title">Pemesanan</span>
+                <i class="mdi mdi-cart menu-icon"></i>
+            </a>
+        </li>
+
+        {{-- Vendor Dashboard (hanya tampil untuk role vendor) --}}
+        @if(Auth::check() && Auth::user()->role === 'vendor')
+        <li class="nav-item {{ request()->is('vendor/dashboard') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('vendor.dashboard') }}">
+                <span class="menu-title">Dashboard Vendor</span>
+                <i class="mdi mdi-store menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item {{ request()->is('menu*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('menu.index') }}">
+                <span class="menu-title">Kelola Menu Makanan</span>
+                <i class="mdi mdi-food menu-icon"></i>
+            </a>
+        </li>
+        @endif
+
+        {{-- Kelola Vendor (hanya tampil untuk role admin) --}}
+        @if(Auth::check() && Auth::user()->role === 'admin')
+        <li class="nav-item {{ request()->is('vendor*') && !request()->is('vendor/dashboard') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('vendor.index') }}">
+                <span class="menu-title">Kelola Vendor</span>
+                <i class="mdi mdi-store-settings menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item {{ request()->is('user*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('user.index') }}">
+                <span class="menu-title">Kelola Akun Pengguna</span>
+                <i class="mdi mdi-account-multiple menu-icon"></i>
+            </a>
+        </li>
+        @endif
 
     </ul>
 </nav>

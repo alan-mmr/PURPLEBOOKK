@@ -34,20 +34,26 @@
                         <span class="availability-status online"></span>
                     </div>
                     <div class="nav-profile-text">
-                        <p class="mb-1 text-black">{{ Auth::user()->name }}</p>
+                        <p class="mb-1 text-black">{{ Auth::check() ? Auth::user()->name : 'Tamu (Guest)' }}</p>
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item" href="#">
-                        <i class="mdi mdi-account mr-2 text-success"></i> Profile
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                        @csrf
-                        <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
-                            <i class="mdi mdi-logout mr-2 text-primary"></i> Logout
-                        </button>
-                    </form>
+                    @auth
+                        <a class="dropdown-item" href="#">
+                            <i class="mdi mdi-account mr-2 text-success"></i> Profile
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form action="{{ route('logout') }}" method="POST" id="logout-form">
+                            @csrf
+                            <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
+                                <i class="mdi mdi-logout mr-2 text-primary"></i> Logout
+                            </button>
+                        </form>
+                    @else
+                        <a class="dropdown-item" href="{{ route('login') }}">
+                            <i class="mdi mdi-login mr-2 text-primary"></i> Login User
+                        </a>
+                    @endauth
                 </div>
             </li>
 
