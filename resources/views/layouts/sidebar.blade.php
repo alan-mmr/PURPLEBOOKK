@@ -236,6 +236,12 @@
                 <i class="mdi mdi-account-multiple menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item {{ request()->is('customer*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('customer.index') }}">
+                <span class="menu-title">Data Customer</span>
+                <i class="mdi mdi-account-box menu-icon"></i>
+            </a>
+        </li>
         @endif
 
     </ul>

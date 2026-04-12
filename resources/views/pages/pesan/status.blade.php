@@ -34,6 +34,20 @@
                     @endif
                 </div>
 
+                {{-- ── QR Code (hanya tampil jika PAID) ── --}}
+                @if($pesanan->status_bayar === 'paid' && isset($qrCodeDataUri))
+                <div class="text-center mb-4 p-3" style="background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%); border-radius: 12px; border: 1px solid #ce93d8;">
+                    <p class="font-weight-bold mb-2" style="color: #7B2D8B;">
+                        <i class="mdi mdi-qrcode"></i> QR Code Pesanan
+                    </p>
+                    <img src="{{ $qrCodeDataUri }}" alt="QR Code Pesanan #{{ $pesanan->idpesanan }}"
+                         style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #7B2D8B; background: #fff; padding: 5px;">
+                    <p class="text-muted mt-2 mb-0">
+                        <small><i class="mdi mdi-cellphone"></i> Scan QR Code untuk verifikasi pesanan</small>
+                    </p>
+                </div>
+                @endif
+
                 {{-- ── Info Pesanan ── --}}
                 <table class="table table-borderless mb-3">
                     <tr>

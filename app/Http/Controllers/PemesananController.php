@@ -8,6 +8,10 @@ use App\Models\DetailPesanan;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class PemesananController extends Controller
 {
@@ -117,6 +121,30 @@ class PemesananController extends Controller
     public function status($id)
     {
         $pesanan = Pesanan::with('detailPesanans.menu', 'vendor')->findOrFail($id);
-        return view('pages.pesan.status', compact('pesanan'));
+
+        // ── Generate QR Code hanya jika sudah PAID ──────────────────────
+        $qrCodeDataUri = null;
+        if ($pesanan->status_bayar === 'paid') {
+            $qrContent = "PURPLEBOOK-ORDER-" . $pesanan->idpesanan
+                       . "|" . $pesanan->transaction_id
+                       . "|" . $pesanan->nama_pemesan
+                       . "|Rp" . number_format($pesanan->total_harga, 0, ',', '.');
+
+            // endroid/qr-code v5.x: constructor-based, tidak ada create() static method
+            $qrCode = new QrCode(
+                data: $qrContent,
+                encoding: new Encoding('UTF-8'),
+                errorCorrectionLevel: ErrorCorrectionLevel::Low,
+                size: 250,
+                margin: 10,
+            );
+
+            $writer = new PngWriter();
+            $result = $writer->write($qrCode);
+
+            $qrCodeDataUri = $result->getDataUri();
+        }
+
+        return view('pages.pesan.status', compact('pesanan', 'qrCodeDataUri'));
     }
 }

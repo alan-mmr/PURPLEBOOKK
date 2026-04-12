@@ -16,6 +16,7 @@ use App\Http\Controllers\VendorDashboardController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -140,5 +141,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::resource('vendor', VendorController::class);
         Route::resource('user', UserController::class);
+
+        // Customer CRUD + serve foto blob
+        Route::get('customer/{id}/photo', [CustomerController::class, 'showPhoto'])->name('customer.photo');
+        Route::resource('customer', CustomerController::class);
     });
 });
