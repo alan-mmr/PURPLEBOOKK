@@ -58,26 +58,22 @@
                     @endphp
                     <div class="form-group">
                         <label class="font-weight-bold">Mode Simpan Foto</label>
-                        <div class="d-flex">
-                            <div class="form-check mr-4">
-                                <input class="form-check-input" type="radio" name="foto_mode"
-                                       id="modeBlob" value="blob"
-                                       {{ $currentMode === 'blob' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="modeBlob">
-                                    <i class="mdi mdi-database"></i> Blob (Database)
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="foto_mode"
-                                       id="modeFile" value="file"
-                                       {{ $currentMode === 'file' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="modeFile">
-                                    <i class="mdi mdi-folder"></i> File (Disk)
-                                </label>
-                            </div>
+                        <div class="form-check form-check-primary">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="foto_mode"
+                                       value="blob" {{ $currentMode === 'blob' ? 'checked' : '' }}>
+                                Blob (Database)
+                            <i class="input-helper"></i></label>
+                        </div>
+                        <div class="form-check form-check-success mb-3">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="foto_mode"
+                                       value="file" {{ $currentMode === 'file' ? 'checked' : '' }}>
+                                File (Disk)
+                            <i class="input-helper"></i></label>
                         </div>
                         <small class="text-muted">
-                            Blob = foto disimpan langsung di database PostgreSQL.<br>
+                            Blob = foto disimpan langsung di database PostgreSQL.<br> 
                             File = foto disimpan sebagai file .jpg di server (storage/customers/).<br>
                             <strong>Tip:</strong> Ganti mode + ambil foto baru untuk konversi penyimpanan.
                         </small>
