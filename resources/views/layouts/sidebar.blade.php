@@ -206,6 +206,14 @@
             </a>
         </li>
 
+        {{-- Scan Barcode Barang (publik — semua bisa akses) --}}
+        <li class="nav-item {{ request()->is('barang/scan') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('barang.scan') }}">
+                <span class="menu-title">Scan Barcode</span>
+                <i class="mdi mdi-barcode-scan menu-icon"></i>
+            </a>
+        </li>
+
         {{-- Vendor Dashboard (hanya tampil untuk role vendor) --}}
         @if(Auth::check() && Auth::user()->role === 'vendor')
         <li class="nav-item {{ request()->is('vendor/dashboard') ? 'active' : '' }}">
@@ -218,6 +226,13 @@
             <a class="nav-link" href="{{ route('menu.index') }}">
                 <span class="menu-title">Kelola Menu Makanan</span>
                 <i class="mdi mdi-food menu-icon"></i>
+            </a>
+        </li>
+        {{-- Scan QR Pesanan (hanya vendor) --}}
+        <li class="nav-item {{ request()->is('vendor/scan-qr') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('vendor.scanQr') }}">
+                <span class="menu-title">Scan QR Pesanan</span>
+                <i class="mdi mdi-qrcode-scan menu-icon"></i>
             </a>
         </li>
         @endif

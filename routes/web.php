@@ -62,6 +62,13 @@ Route::get('pesan/{id}/bayar', [PaymentController::class, 'pay'])->name('pesan.b
 Route::get('pesan/{id}/status', [PemesananController::class, 'status'])->name('pesan.status');
 
 // ─────────────────────────────────────────────────────────────
+// Praktikum 1 — Barcode Scanner (Public, tidak perlu login)
+// Siapapun bisa scan barcode barang (admin, vendor, publik)
+// ─────────────────────────────────────────────────────────────
+Route::get('barang/scan', [BarangController::class, 'scanBarcode'])->name('barang.scan');
+Route::get('barang/lookup', [BarangController::class, 'lookupBarang'])->name('barang.lookup');
+
+// ─────────────────────────────────────────────────────────────
 // Midtrans Webhook — exclude CSRF (Midtrans tidak kirim CSRF token)
 // Keamanan dijamin via signature key SHA512 di dalam handler
 // ─────────────────────────────────────────────────────────────
@@ -132,6 +139,14 @@ Route::middleware('auth')->group(function () {
         Route::get('vendor/dashboard', [VendorDashboardController::class, 'index'])
             ->name('vendor.dashboard');
         Route::resource('menu', MenuController::class);
+
+        // ─────────────────────────────────────────────────────────────
+        // Praktikum 2B — QR Code Scanner untuk Vendor
+        // ─────────────────────────────────────────────────────────────
+        Route::get('vendor/scan-qr', [VendorDashboardController::class, 'scanQr'])
+            ->name('vendor.scanQr');
+        Route::get('vendor/lookup-pesanan', [VendorDashboardController::class, 'lookupPesanan'])
+            ->name('vendor.lookupPesanan');
     });
 
     // ─────────────────────────────────────────────────────────────

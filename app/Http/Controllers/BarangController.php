@@ -247,4 +247,46 @@ class BarangController extends Controller
         return $pdf->stream('Label_Barang_TnJ108_' . date('Ymd_His') . '.pdf');
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // PRAKTIKUM 1 — Barcode Scanner
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * GET /barang/scan
+     * Halaman scanner barcode (publik, tanpa login).
+     * Menggunakan kamera untuk scan barcode CODE_128 dari label cetak.
+     */
+    public function scanBarcode()
+    {
+        return view('pages.barang.scan');
+    }
+
+    /**
+     * GET /barang/lookup?id=XXX
+     * AJAX endpoint — cari barang berdasarkan id_barang.
+     * Dipanggil oleh halaman scanner setelah barcode berhasil dibaca.
+     *
+     * Return JSON:
+     *   200: { id_barang, nama, harga }
+     *   404: { error: 'Barang tidak ditemukan' }
+     */
+    public function lookupBarang(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|string',
+        ]);
+
+        $barang = Barang::find($request->id);
+
+        if (!$barang) {
+            return response()->json(['error' => 'Barang tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'id_barang' => $barang->id_barang,
+            'nama'      => $barang->nama,
+            'harga'     => $barang->harga,
+        ]);
+    }
+
 }

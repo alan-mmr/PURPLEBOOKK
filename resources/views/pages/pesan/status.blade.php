@@ -40,11 +40,29 @@
                     <p class="font-weight-bold mb-2" style="color: #7B2D8B;">
                         <i class="mdi mdi-qrcode"></i> QR Code Pesanan
                     </p>
-                    <img src="{{ $qrCodeDataUri }}" alt="QR Code Pesanan #{{ $pesanan->idpesanan }}"
+                    {{-- QR Code image — id="qrImage" dipakai JS untuk download --}}
+                    <img id="qrImage"
+                         src="{{ $qrCodeDataUri }}"
+                         alt="QR Code Pesanan #{{ $pesanan->idpesanan }}"
                          style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #7B2D8B; background: #fff; padding: 5px;">
-                    <p class="text-muted mt-2 mb-0">
-                        <small><i class="mdi mdi-cellphone"></i> Scan QR Code untuk verifikasi pesanan</small>
+                    <p class="text-muted mt-2 mb-1">
+                        <small><i class="mdi mdi-cellphone"></i> Tunjukkan QR Code ini ke vendor saat mengambil pesanan</small>
                     </p>
+
+                    {{-- Tombol Download QR Code --}}
+                    <button id="btnDownloadQr" class="btn btn-sm btn-outline-primary mt-1">
+                        <i class="mdi mdi-download"></i> Simpan QR Code
+                    </button>
+
+                    {{-- Info: cara akses QR lagi --}}
+                    <div class="alert py-2 px-3 mt-2 mb-0" style="background: rgba(123,45,139,0.08); border: 1px solid #ce93d8; border-radius: 8px;">
+                        <small style="color: #7B2D8B;">
+                            <i class="mdi mdi-bookmark-outline"></i>
+                            <strong>Simpan halaman ini!</strong>
+                            Kamu bisa kembali ke halaman ini kapan saja untuk melihat QR Code.
+                            <br><code style="font-size: 0.75rem;">{{ url()->current() }}</code>
+                        </small>
+                    </div>
                 </div>
                 @endif
 
@@ -121,3 +139,19 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+@if($pesanan->status_bayar === 'paid' && isset($qrCodeDataUri))
+<script>
+// ── Tombol Download QR Code ───────────────────────────────────────────
+// Menggunakan <a download> trick untuk save image dari data URI
+document.getElementById('btnDownloadQr').addEventListener('click', function () {
+    const img  = document.getElementById('qrImage');
+    const link = document.createElement('a');
+    link.href     = img.src;
+    link.download = 'QRCode-Pesanan-{{ $pesanan->idpesanan }}.png';
+    link.click();
+});
+</script>
+@endif
+@endpush
