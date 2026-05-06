@@ -17,6 +17,8 @@ use App\Http\Controllers\VendorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\TokoController;
+use App\Http\Controllers\KunjunganController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -131,6 +133,21 @@ Route::middleware('auth')->group(function () {
     // Endpoint AJAX: lookup barang & simpan transaksi
     Route::get('pos/barang', [PenjualanController::class, 'getBarang'])->name('pos.getBarang');
     Route::post('pos/store', [PenjualanController::class, 'store'])->name('pos.store');
+
+    // ─────────────────────────────────────────────────────────────
+    // Geolocation — Kunjungan Toko (semua user yang login)
+    // ─────────────────────────────────────────────────────────────
+    Route::get('toko', [TokoController::class, 'index'])->name('toko.index');
+    Route::post('toko', [TokoController::class, 'store'])->name('toko.store');
+    Route::put('toko/{barcode}', [TokoController::class, 'update'])->name('toko.update');
+    Route::post('toko/cetak-barcode', [TokoController::class, 'cetakBarcode'])->name('toko.cetakBarcode');
+    Route::get('toko/lookup', [TokoController::class, 'lookupToko'])->name('toko.lookup');
+    Route::delete('toko/{barcode}', [TokoController::class, 'destroy'])->name('toko.destroy');
+
+    Route::get('kunjungan/titik-awal', [KunjunganController::class, 'titikAwal'])->name('kunjungan.titikAwal');
+    Route::post('kunjungan/update-titik', [KunjunganController::class, 'updateTitik'])->name('kunjungan.updateTitik');
+    Route::get('kunjungan', [KunjunganController::class, 'kunjungan'])->name('kunjungan.index');
+    Route::post('kunjungan/validasi', [KunjunganController::class, 'validasiKunjungan'])->name('kunjungan.validasi');
 
     // ─────────────────────────────────────────────────────────────
     // Vendor Dashboard — hanya role vendor

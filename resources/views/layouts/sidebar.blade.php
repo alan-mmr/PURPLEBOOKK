@@ -188,6 +188,55 @@
         }
         </script>
 
+        {{-- Toko (Geolocation SK Baru) --}}
+        <li class="nav-item {{ request()->is('toko') || request()->is('toko/*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('toko.index') }}">
+                <span class="menu-title">Toko</span>
+                <i class="mdi mdi-store-marker menu-icon"></i>
+            </a>
+        </li>
+
+        {{-- Kunjungan Toko (Dropdown: Titik Awal + Titik Kunjungan) --}}
+        <li class="nav-item {{ request()->is('kunjungan*') ? 'active' : '' }}"
+            id="kunjunganParent">
+            <a class="nav-link" href="javascript:void(0)" onclick="toggleKunjunganMenu(event)">
+                <span class="menu-title">Kunjungan Toko</span>
+                <i class="mdi mdi-chevron-right menu-icon" id="kunjunganArrow"
+                   style="font-size:18px; transition:transform 0.2s;"></i>
+            </a>
+            <div id="kunjunganMenu" style="{{ request()->is('kunjungan*') ? '' : 'display:none;' }}">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('kunjungan/titik-awal') ? 'active' : '' }}"
+                           href="{{ route('kunjungan.titikAwal') }}">Input Titik Awal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('kunjungan') ? 'active' : '' }}"
+                           href="{{ route('kunjungan.index') }}">Titik Kunjungan</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <script>
+        (function() {
+            var menu  = document.getElementById('kunjunganMenu');
+            var arrow = document.getElementById('kunjunganArrow');
+            if (menu && menu.style.display !== 'none') arrow.style.transform = 'rotate(90deg)';
+        })();
+        function toggleKunjunganMenu(e) {
+            e.preventDefault(); e.stopPropagation();
+            var menu  = document.getElementById('kunjunganMenu');
+            var arrow = document.getElementById('kunjunganArrow');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display  = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                menu.style.display  = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        </script>
+
         {{-- PDF Generation (Studi Kasus 2) --}}
         <li class="nav-item {{ request()->is('pdf*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('pdf.index') }}">
