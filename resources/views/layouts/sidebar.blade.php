@@ -255,6 +255,34 @@
             </a>
         </li>
 
+        {{-- Antrian Digital (publik — buka tab baru, clean tanpa sidebar) --}}
+        <li class="nav-item {{ request()->is('antrian') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('antrian.guest') }}" target="_blank">
+                <span class="menu-title">Antrian</span>
+                <i class="mdi mdi-ticket-outline menu-icon"></i>
+            </a>
+        </li>
+
+        {{-- Papan Antrian (publik) --}}
+        <li class="nav-item {{ request()->is('antrian/papan*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('antrian.papan') }}" target="_blank">
+                <span class="menu-title">Papan Antrian</span>
+                <i class="mdi mdi-television menu-icon"></i>
+            </a>
+        </li>
+
+        {{-- Kelola Antrian (hanya admin dan petugas antrian) --}}
+        @auth
+        @if(Auth::user()->role === 'admin' || Auth::user()->role === 'petugas antrian')
+        <li class="nav-item {{ request()->is('antrian/admin*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('antrian.admin') }}">
+                <span class="menu-title">Kelola Antrian</span>
+                <i class="mdi mdi-account-multiple-check menu-icon"></i>
+            </a>
+        </li>
+        @endif
+        @endauth
+
         {{-- Scan Barcode Barang (publik — semua bisa akses) --}}
         <li class="nav-item {{ request()->is('barang/scan') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('barang.scan') }}">

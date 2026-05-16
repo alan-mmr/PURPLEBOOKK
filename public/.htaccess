@@ -23,3 +23,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# ─── SSE: Matikan GZIP/Deflate agar data langsung streaming ─────
+<IfModule mod_deflate.c>
+    SetEnvIfNoCase Request_URI \/sse\/antrian no-gzip dont-vary
+</IfModule>

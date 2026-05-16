@@ -37,4 +37,12 @@ class Vendor extends Model
     {
         return $this->hasMany(Pesanan::class, 'idvendor', 'idvendor');
     }
+
+    /**
+     * Antrian yang masuk ke vendor ini (fitur Antrian Digital).
+     */
+    public function antrians()
+    {
+        return $this->hasMany(Antrian::class, 'idvendor', 'idvendor');
+    }
 }

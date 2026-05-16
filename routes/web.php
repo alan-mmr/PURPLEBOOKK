@@ -19,6 +19,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganController;
+use App\Http\Controllers\AntrianController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,6 +78,16 @@ Route::get('barang/lookup', [BarangController::class, 'lookupBarang'])->name('ba
 Route::post('midtrans/webhook', [PaymentController::class, 'webhook'])
     ->name('midtrans.webhook')
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
+// ─────────────────────────────────────────────────────────────
+// Antrian Digital (Public — tanpa login)
+// Route spesifik (papan, admin) HARUS didaftarkan SEBELUM {id}/tiket
+// ─────────────────────────────────────────────────────────────
+Route::get('antrian', [AntrianController::class, 'guestForm'])->name('antrian.guest');
+Route::post('antrian', [AntrianController::class, 'store'])->name('antrian.store');
+Route::get('antrian/papan', [AntrianController::class, 'papan'])->name('antrian.papan');
+Route::get('sse/antrian', [AntrianController::class, 'stream'])->name('sse.antrian');
+Route::get('antrian/{id}/tiket', [AntrianController::class, 'tiket'])->name('antrian.tiket');
 
 // ─────────────────────────────────────────────────────────────
 // Protected Routes (hanya bisa diakses setelah login + OTP berhasil)
@@ -178,4 +189,17 @@ Route::middleware('auth')->group(function () {
         Route::get('customer/{id}/photo', [CustomerController::class, 'showPhoto'])->name('customer.photo');
         Route::resource('customer', CustomerController::class);
     });
+
+    // ─────────────────────────────────────────────────────────────
+    // Antrian Digital — Panel Petugas (role admin ATAU petugas antrian)
+    // ─────────────────────────────────────────────────────────────
+    Route::middleware('role:admin,petugas antrian')->group(function () {
+        Route::get('antrian/admin', [AntrianController::class, 'adminPanel'])->name('antrian.admin');
+        Route::post('antrian/{id}/panggil', [AntrianController::class, 'panggil'])->name('antrian.panggil');
+        Route::post('antrian/{id}/panggil-terlewat', [AntrianController::class, 'panggilTerlewat'])->name('antrian.panggilTerlewat');
+        Route::post('antrian/{id}/ulangi', [AntrianController::class, 'ulangi'])->name('antrian.ulangi');
+        Route::post('antrian/{id}/terlewat', [AntrianController::class, 'terlewat'])->name('antrian.terlewat');
+        Route::post('antrian/{id}/selesai', [AntrianController::class, 'selesai'])->name('antrian.selesai');
+    });
 });
+
