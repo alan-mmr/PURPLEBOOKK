@@ -20,6 +20,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\KunjunganController;
 use App\Http\Controllers\AntrianController;
+use App\Http\Controllers\AbsensiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -201,5 +202,23 @@ Route::middleware('auth')->group(function () {
         Route::post('antrian/{id}/terlewat', [AntrianController::class, 'terlewat'])->name('antrian.terlewat');
         Route::post('antrian/{id}/selesai', [AntrianController::class, 'selesai'])->name('antrian.selesai');
     });
+
+    // ─────────────────────────────────────────────────────────────
+    // Absensi NFC — Panel Petugas (role admin ATAU security)
+    // ─────────────────────────────────────────────────────────────
+    Route::middleware('role:admin,security')->prefix('absensi')->group(function () {
+        Route::get('scan',           [AbsensiController::class, 'scanner'])->name('absensi.scan');
+        Route::post('catat',         [AbsensiController::class, 'catat'])->name('absensi.catat');
+        Route::get('kartu',          [AbsensiController::class, 'daftarKartu'])->name('absensi.kartu');
+        Route::post('kartu',         [AbsensiController::class, 'simpanKartu'])->name('absensi.kartu.simpan');
+        Route::delete('kartu/{id}',  [AbsensiController::class, 'hapusKartu'])->name('absensi.kartu.hapus');
+        Route::get('riwayat',        [AbsensiController::class, 'riwayat'])->name('absensi.riwayat');
+        // Hapus record absensi — khusus admin untuk keperluan testing
+        Route::delete('riwayat/{id}', [AbsensiController::class, 'hapusAbsensi'])->name('absensi.hapus')->middleware('role:admin');
+    });
+
+    // QR pribadi: semua user login bisa lihat QR miliknya sendiri
+    Route::get('absensi/qr/{userId?}', [AbsensiController::class, 'generateQr'])->name('absensi.qr');
 });
+
 

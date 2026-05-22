@@ -291,6 +291,38 @@
             </a>
         </li>
 
+        {{-- Menu Absensi NFC (admin & security) --}}
+        @if(Auth::check() && in_array(Auth::user()->role, ['admin', 'security']))
+        <li class="nav-item {{ request()->is('absensi/scan') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('absensi.scan') }}">
+                <span class="menu-title">Scanner</span>
+                <i class="mdi mdi-credit-card-wireless menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item {{ request()->is('absensi/kartu') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('absensi.kartu') }}">
+                <span class="menu-title">Kelola Kartu</span>
+                <i class="mdi mdi-credit-card-settings menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item {{ request()->is('absensi/riwayat') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('absensi.riwayat') }}">
+                <span class="menu-title">Riwayat</span>
+                <i class="mdi mdi-history menu-icon"></i>
+            </a>
+        </li>
+        @endif
+
+        {{-- QR Pribadi (semua user login) --}}
+        @auth
+        <li class="nav-item {{ request()->is('absensi/qr*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('absensi.qr') }}" target="_blank">
+                <span class="menu-title">QR Absensi Saya</span>
+                <i class="mdi mdi-qrcode menu-icon"></i>
+            </a>
+        </li>
+        @endauth
+
         {{-- Vendor Dashboard (hanya tampil untuk role vendor) --}}
         @if(Auth::check() && Auth::user()->role === 'vendor')
         <li class="nav-item {{ request()->is('vendor/dashboard') ? 'active' : '' }}">
@@ -337,5 +369,6 @@
         @endif
 
     </ul>
+
 </nav>
 

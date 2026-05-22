@@ -48,4 +48,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // ─── Relasi ──────────────────────────────────────────────────
+    public function kartuNfcs()
+    {
+        return $this->hasMany(KartuNfc::class);
+    }
+
+    public function absensis()
+    {
+        return $this->hasMany(Absensi::class);
+    }
 }

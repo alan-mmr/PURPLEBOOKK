@@ -45,3 +45,7 @@ desktop.ini
 
 # Laravel Herd specific
 /.herd/
+
+# Document & Perintah folder
+/docs perintah/
+
